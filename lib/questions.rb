@@ -1,22 +1,32 @@
 # keep only the elements that start with an a
 def select_elements_starting_with_a(array)
+  array.select { |num| num[0] == 'a' }
 end
 
 # keep only the elements that start with a vowel
 def select_elements_starting_with_vowel(array)
+  return array.select do |element|
+    element[0].match(/[aeiouAEIOU]/)
+  end
+
 end
 
 # remove instances of nil (but NOT false) from an array
 def remove_nils_from_array(array)
+  return array.delete_if { |element| element.nil? }
 end
 
 # remove instances of nil AND false from an array
 def remove_nils_and_false_from_array(array)
+  return array.reject { |element| element.nil? || element == false }
 end
 
 # don't reverse the array, but reverse every word inside it. e.g.
 # ['dog', 'monkey'] becomes ['god', 'yeknom']
 def reverse_every_element_in_array(array)
+  return array.map do |element|
+    element.reverse
+  end
 end
 
 # given an array of student names, like ['Bob', 'Dave', 'Clive']
@@ -24,20 +34,24 @@ end
 # [['Bob', 'Clive'], ['Bob', 'Dave'], ['Clive', 'Dave']]
 # make sure you don't have the same pairing twice,
 def every_possible_pairing_of_students(array)
+  array.combination(2).to_a
 end
 
 # discard the first 3 elements of an array,
 # e.g. [1, 2, 3, 4, 5, 6] becomes [4, 5, 6]
 def all_elements_except_first_3(array)
+  array[3..-1]
 end
 
 # add an element to the beginning of an array
 def add_element_to_beginning_of_array(array, element)
+  return array.unshift(element);
 end
 
 # sort an array of words by their last letter, e.g.
 # ['sky', 'puma', 'maker'] becomes ['puma', 'maker', 'sky']
 def array_sort_by_last_letter_of_word(array)
+  return array.sort { |x, y| x[-1] <=> y[-1] }
 end
 
 # cut strings in half, and return the first half, e.g.
@@ -56,6 +70,9 @@ end
 # even numbers come first
 # so [1, 2, 3, 4, 5, 6] becomes [[2, 4, 6], [1, 3, 5]]
 def separate_array_into_even_and_odd_numbers(array)
+  even = array.select { |element| element % 2 === 0 }
+  odd = array.reject { |element| element % 2 === 0 }
+  return [even, odd]
 end
 
 # count the numbers of elements in an element which are palindromes
@@ -63,33 +80,41 @@ end
 # e.g. 'bob'. So in the array ['bob', 'radar', 'eat'], there
 # are 2 palindromes (bob and radar), so the method should return 2
 def number_of_elements_that_are_palindromes(array)
+  array.select { |element| element == element.reverse }.length
 end
 
 # return the shortest word in an array
 def shortest_word_in_array(array)
+  array.min { |a, b| a.size <=> b.size }
 end
 
 # return the shortest word in an array
 def longest_word_in_array(array)
+  array.max { |a, b| a.size <=> b.size }
 end
 
 # add up all the numbers in an array, so [1, 3, 5, 6]
 # returns 15
 def total_of_array(array)
+  return array.reduce(:+)
 end
 
 # turn an array into itself repeated twice. So [1, 2, 3]
 # becomes [1, 2, 3, 1, 2, 3]
 def double_array(array)
+  return array + array.dup
 end
 
 # convert a symbol into a string
 def turn_symbol_into_string(symbol)
+  return symbol.to_s
 end
 
 # get the average from an array, rounded to the nearest integer
 # so [10, 15, 25] should return 17
 def average_of_array(array)
+  total = array.reduce(:+).to_f
+  return (total / array.length).ceil
 end
 
 # get all the elements in an array, up until the first element
@@ -97,6 +122,14 @@ end
 # [1, 3, 5, 4, 1, 2, 6, 2, 1, 3, 7]
 # becomes [1, 3, 5, 4, 1, 2]
 def get_elements_until_greater_than_five(array)
+  array2 = []
+  array.map do |element|
+    if element > 5
+      break
+    end
+    array2.push(element)
+  end
+  return array2
 end
 
 # turn an array (with an even number of elements) into a hash, by
@@ -116,32 +149,40 @@ end
 # {'a' => 'b', 'c' => 'd'} becomes
 # {'b' => 'a', 'd' => 'c'}
 def swap_keys_and_values_in_a_hash(hash)
+  return hash.invert
 end
 
 # in a hash where the keys and values are all numbers
 # add all the keys and all the values together, e.g.
 # {1 => 1, 2 => 2} becomes 6
 def add_together_keys_and_values(hash)
+  total = 0;
+  hash.each { |x, y| total += x + y }
+  return total;
 end
 
 # take out all the capital letters from a string
 # so 'Hello JohnDoe' becomes 'ello ohnoe'
 def remove_capital_letters_from_string(string)
+  return string.gsub(/[[:upper:]]/, '')
 end
 
 # round up a float up and convert it to an Integer,
 # so 3.214 becomes 4
 def round_up_number(float)
+  return float.ceil
 end
 
 # round down a float up and convert it to an Integer,
 # so 9.52 becomes 9
 def round_down_number(float)
+  return float.floor
 end
 
 # take a date and format it like dd/mm/yyyy, so Halloween 2013
 # becomes 31/10/2013
 def format_date_nicely(date)
+  "#{date.day}/#{date.month}/#{date.year}"
 end
 
 # get the domain name *without* the .com part, from an email address
@@ -155,30 +196,61 @@ end
 # 'the lion the witch and the wardrobe' becomes
 # 'The Lion the Witch and the Wardrobe'
 def titleize_a_string(string)
+  words = string.split(' ')
+  first = words.shift
+  words.map! do |word|
+    if (/^(?:a|and|the)$/.match(word))
+      word
+    else
+      word.capitalize
+    end
+  end
+  first.capitalize!
+  return_text = words.join(' ')
+  return first + ' ' + return_text
+=begin
+1. split the string according
+2. single out the first word
+3. select a & and the ignore
+4.
+5.
+=end
+
 end
 
 # return true if a string contains any special characters
 # where 'special character' means anything apart from the letters
 # a-z (uppercase and lower) or numbers
 def check_a_string_for_special_characters(string)
+
 end
 
 # get the upper limit of a range. e.g. for the range 1..20, you
 # should return 20
 def get_upper_limit_of(range)
+  return range.max
 end
 
 # should return true for a 3 dot range like 1...20, false for a
 # normal 2 dot range
 def is_a_3_dot_range?(range)
+  range.exclude_end?
 end
 
 # get the square root of a number
 def square_root_of(number)
+  number**0.5
 end
 
 # count the number of words in a file
 def word_count_a_file(file_path)
+  word = []
+  File.open(file_path, 'r') do |file|
+    file.readlines.each do |line|
+      word = line.split(' ')
+    end
+  end
+  word.length
 end
 
 # --- tougher ones ---
@@ -187,6 +259,7 @@ end
 # called call_method_from_string('foobar')
 # the method foobar should be invoked
 def call_method_from_string(str_method)
+
 end
 
 # return true if the date is a uk bank holiday for 2014
@@ -213,7 +286,36 @@ end
 # implement fizzbuzz without modulo, i.e. the % method
 # go from 1 to 100
 # (there's no RSpec test for this one)
+# def fizzbuzz_without_modulo
+#   (1..100).each do |my_int|
+#     if (((my_int / 15.0).denominator) == 1) # return denominator 1 if number is divisable
+#       p 'fizzbuzz'
+#     elsif (((my_int / 5.0).denominator) == 1)
+#       p 'buzz'
+#     elsif (((my_int / 3.0).denominator) == 1)
+#       p 'fizz'
+#     else
+#       p my_int
+#     end
+#   end
+# end
+
 def fizzbuzz_without_modulo
+  (1..100).each do |my_int|
+    if divisable my_int, 15 # return denominator 1 if number is divisable
+      p 'fizzbuzz'
+    elsif divisable my_int, 5
+      p 'buzz'
+    elsif divisable my_int, 3
+      p 'fizz'
+    else
+      p my_int
+    end
+  end
+end
+
+def divisable(number, divisor)
+  return ((number / divisor).denominator) == 1
 end
 
 # print the lyrics of the song 99 bottles of beer on the wall
@@ -223,4 +325,7 @@ end
 # at the end.
 # (there's no RSpec test for this one)
 def ninety_nine_bottles_of_beer
+  # 1. set a counter to 99 (99.downto(1)) loop 99-> 1
+  #   - if statement to number to output correct plural and singlular version
+  # 2.print lyrics with number
 end
